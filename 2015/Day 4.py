@@ -1,3 +1,5 @@
+import hashlib
+
 def load_input(source):
     data = []
     with open(source) as file:
@@ -6,13 +8,22 @@ def load_input(source):
     if len(data) == 1:
         data = data[0]
     return data
-    
 
 def first_star(data):
-    return "Not solved"
-
+    hashed = "11111"
+    num = 0
+    while str(hashed[0:5]) != "00000":
+        num += 1
+        hashed = hashlib.md5(("yzbqklnj" + str(num)).encode("utf-8")).hexdigest()
+    return num
+        
 def second_star(data):
-    return "Not solved"
+    hashed = "111111"
+    num = 0
+    while str(hashed[0:6]) != "000000":
+        num += 1
+        hashed = hashlib.md5(("yzbqklnj" + str(num)).encode("utf-8")).hexdigest()
+    return num
 
 def solution(source):
     data = load_input(source)
