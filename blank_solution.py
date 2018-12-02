@@ -2,7 +2,7 @@ def load_input(source):
     data = []
     with open(source) as file:
         for line in file:
-            data.append(line)
+            data.append(line.strip())
     if len(data) == 1:
         data = data[0]
     return data
