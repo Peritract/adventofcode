@@ -15,15 +15,15 @@ def first_star(data):
     return freq
 
 def second_star(data):
-    # Currently a slow brute force. I think the thing I need to understand is difference tables, but I don't get it yet.
     freq = 0
-    freqs = []
+    freqs = {0: 1}
     while True:
         for i in data:
-            freqs.append(freq)
             freq += int(i)
             if freq in freqs:
                 return freq
+            else:
+                freqs[freq] = 1
 
 def solution(source):
     data = load_input(source)
