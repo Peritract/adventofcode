@@ -5,3 +5,8 @@
 This repository contains my solutions to the challenges. 
 
 At the moment, the repository is mostly empty. I'm redoing my solutions because I've lost them all. It will update as and when I solve the puzzles again.
+
+```sql
+SELECT * FROM table
+WHERE
+```
