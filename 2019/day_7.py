@@ -145,7 +145,7 @@ class IntCodeComputer:
 def calibrate_amplifiers(phases, data):
     signal = 0
     for i in range(0,5):
-        comp = IntCodeComputer(data, [phases[i], signal])
+        comp = IntCodeComputer(data.copy(), [phases[i], signal])
         comp.run()
         signal = comp.output_log[-1]
     return signal
@@ -153,7 +153,7 @@ def calibrate_amplifiers(phases, data):
 def calibrate_amplifiers_feedback(phases, data):
     signal = 0
     current = 0
-    machines = [IntCodeComputer(data, [phases[x]]) for x in range(5)]
+    machines = [IntCodeComputer(data.copy(), [phases[x]]) for x in range(5)]
     while any([not x.halt for x in machines]):
         machines[current].add_input(signal)
         machines[current].run()
