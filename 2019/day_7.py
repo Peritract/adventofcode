@@ -185,8 +185,8 @@ def solution(source):
     data = load_input(source)
     data = [int(x) for x in data.split(",")]
     print("Day 7")
-    print("First star:", str(first_star(data.copy())))
-    print("Second star:", str(second_star(data.copy())))
+    print("First star:", str(first_star(data)))
+    print("Second star:", str(second_star(data)))
     print("-------------------------------------")
 
 if __name__ == "__main__":
