@@ -1,4 +1,7 @@
-# This class is used in many of the puzzle solutions, with slight changes as it evolves. This file contains the latest copy.
+# This class is used in many of the puzzle solutions, with slight changes as it evolves.
+# This file contains the completed version, used by solutions which merely use the computer, rather than evolve it. Intermediate
+# versions of the computer are stored in their respective solution files.
+
 
 class IntCodeComputer:
     def __init__(self, memory, input_list=[]):
