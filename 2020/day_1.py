@@ -4,10 +4,13 @@ def load_input(source):
     return nums
 
 def first_star(data):
-    for i in range(len(data) - 1):
-        for j in range(i, len(data)):
-            if data[i] + data[j] == 2020:
-                    return data[i] * data[j]
+    # Linear time!
+    num_dict = {}
+    for num in data:
+        val = 2020 - num
+        if num in num_dict:
+            print(num_dict[num] * num)
+        num_dict[val] = num
 
 def second_star(data):
     for i in range(len(data) - 2):
