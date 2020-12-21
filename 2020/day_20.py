@@ -7,7 +7,6 @@ kept on getting the wrong answer. I was not carefully handling multiple monsters
 hint on Reddit let me know what to look for.
 """
 
-
 import re
 import regex
 from math import prod, sqrt
