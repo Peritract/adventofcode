@@ -11,24 +11,25 @@ class Tile:
         self.grid = grid
         self.unique_edges = None
         self.placed = False
+        self.size = len(grid)
     
     def __str__(self):
         return f'TILE {self.id}'
     
     @property
-    def dir_edges(self):
+    def edges_d(self):
         return {'U': self.grid[0],
-                'D': "".join(reversed(self.grid[-1])),
-                'L': "".join([x[0] for x in self.grid]),
-                'R': "".join([x[-1] for x in self.grid])}
+                'R': "".join([x[-1] for x in self.grid]),
+                'D': self.grid[-1],
+                'L': "".join([x[0] for x in self.grid])}
     
     @property
     def edges(self):
-        return [x for x in self.dir_edges.values()]
+        return [x for x in self.edges_d.values()]
     
     @property
     def edges_r(self):
-        return ["".join(reversed(x)) for x in self.dir_edges.values()]
+        return ["".join(reversed(x)) for x in self.edges_d.values()]
     
     @property
     def is_edge(self):
@@ -69,10 +70,23 @@ class Tile:
         
     def orient_corner(self):
         if self.is_corner:
-            check = sorted(self.unique_edges[:2]) == sorted([self.dir_edges['U'], self.dir_edges['L']])
-            while not check:
-                self.rotate(True)
-                check = sorted(self.unique_edges[:2]) == sorted([self.dir_edges['U'], self.dir_edges['L']])
+            for i in range(0, 3):
+                if self.edges_d['U'] in self.unique_edges and self.edges_d['L'] in self.unique_edges:
+                    return
+                else:
+                    self.rotate(True)
+            self.flip(True)
+            for i in range(0, 3):
+                if self.edges_d['U'] in self.unique_edges and self.edges_d['L'] in self.unique_edges:
+                    return
+                else:
+                    self.rotate(True)
+                    
+    def get_borderless_grid(self):
+        return [x[1:-1] for x in self.grid[1:-1]]
+    
+    def count_hashes(self):
+        return sum([x.count('#') for x in self.grid])
             
 class Chart:
     
@@ -81,7 +95,14 @@ class Chart:
         self.tiles = situate_tiles(tiles)
         self.grid = [[None for x in range(self.size)] for y in range(self.size)]
         self.corners = [x.id for x in self.tiles.values() if x.is_corner]
+        self.tapestry = None
+        self.monster = ['..................#.',
+                        '#....##....##....###',
+                        '.#..#..#..#..#..#...']
         
+        self.fill_grid()
+        self.stitch_tapestry()
+
     @property
     def grid_complete(self):
         for y in self.grid:
@@ -95,7 +116,7 @@ class Chart:
             for x in y:
                 print(x if x else None, end='\t')
             print('')
-    
+
     def in_bounds(self, y, x):
         return 0 <= y < self.size and 0 <= x < self.size
     
@@ -120,24 +141,60 @@ class Chart:
                 # Check if each tile is a valid placement here
                 valid = False
                 if not tile.placed:
-                    if any([edg in other.edges for edg in tile.edges]):
-                        valid = True
-                    elif any([edg in other.edges for edg in tile.edges_r]):
-                        valid = True
-                        tile.flip(True)
-                if valid:
-                    turns = 0
-                    while turns < 4:
-                        tile.rotate(True)
-                        if (not U or U.dir_edges['D'] == tile.dir_edges['U']) and (not L or L.dir_edges['R'] == tile.dir_edges['L']):
-                            self.grid[y][x] = tile.id
+                    for i in range(4):
+                        if (not U or U.edges_d['D'] == tile.edges_d['U']) and (not L or L.edges_d['R'] == tile.edges_d['L']):    
                             tile.placed = True
+                            self.grid[y][x] = tile.id
                             return
-                        turns += 1
+                        else:
+                            tile.rotate(True)
+                    tile.flip(True)
+                    for i in range(4):
+                        if (not U or U.edges_d['D'] == tile.edges_d['U']) and (not L or L.edges_d['R'] == tile.edges_d['L']):
+                            tile.placed = True
+                            self.grid[y][x] = tile.id
+                            return
+                        else:
+                            tile.rotate(True)
+    
+    def fill_grid(self):
+        # Pick a starting corner
+        start = self.tiles[self.corners[0]]
+        # Flip it to face into the grid
+        start.orient_corner()
+        # Place the tile in the top-left of the grid
+        self.grid[0][0] = start.id
+        start.placed = True
+
+        while not self.grid_complete:
+            for y in range(self.size):
+                for x in range(self.size):
+                    self.place_tile(y, x)
                     
-                    print('--------')
-                    
-                    return
+    def stitch_tapestry(self):
+        tapestry = []
+        grid_size = len(list(self.tiles.values())[0].get_borderless_grid())
+        for row in self.grid:
+            for i in range(grid_size):
+                line = []
+                for col in row:
+                    line.append(self.tiles[col].get_borderless_grid()[i])
+                tapestry.append("".join(line))
+        self.tapestry = Tile('TAPESTRY', tapestry)
+            
+    def scan_for_monsters(self):
+        count = 0
+        grid = self.tapestry.grid
+        for i in range(self.tapestry.size - 2):
+            match = re.search(self.monster[2], grid[i + 2])
+            if match:
+                span = match.span()
+                if re.match(self.monster[0], grid[i][span[0]:span[1]]) and re.match(self.monster[1], grid[i + 1][span[0]:span[1]]):
+                    count += 1
+        return count
+    
+    def monster_size(self):
+        return sum([x.count('#') for x in self.monster])
 
 def load_input(source="input.txt"):
     with open(source, 'r') as file:
@@ -169,21 +226,21 @@ def first_star(tiles):
     return prod(corners)
         
 def second_star(tiles):
-    tiles[1951].flip(True)
     chart = Chart(tiles)
+    for i in range(0, 4):
+        monsters = chart.scan_for_monsters()
+        if monsters > 0:
+            monstotal = monsters * chart.monster_size()
+            print(chart.tapestry.count_hashes() - monstotal)
+        chart.tapestry.rotate(True)
+    chart.tapestry.flip(True)
+    for i in range(0, 4):
+        monsters = chart.scan_for_monsters()
+        if monsters > 0:
+            monstotal = monsters * chart.monster_size()
+            print(chart.tapestry.count_hashes() - monstotal)
+        chart.tapestry.rotate(True)
     
-    # Pick a starting corner
-    start = tiles[chart.corners[0]]
-    # Flip it to face into the grid
-    start.orient_corner()
-    # Place the tile in the top-left of the grid
-    chart.grid[0][0] = start.id
-    start.placed = True
-    chart.place_tile(0, 1)
-    chart.place_tile(1, 0)
-    chart.place_tile(1, 1)
-    chart.display()
-
 def solution(source):
     data = load_input(source)
     print("Day 20")
