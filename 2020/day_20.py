@@ -1,6 +1,15 @@
-# I needed some help with this one - I got lost in my head and went in the wrong direction for a while.
+"""
+I needed lots of help with this one - I solved the morning reasonably fast, but then had to rebuild it for part 2, and
+in so doing, got myself completely turned around. I had to have someone talk me through their solution for part 1 before
+I could rebuild mine again. After that, it went relatively quickly except for the eon spent trying to work out what was
+wrong with my .flip (nothing was wrong - I had an error in my corner orientation). Finally I got the map working, but
+kept on getting the wrong answer. I was not carefully handling multiple monsters on one line, or overlapping monsters; a
+hint on Reddit let me know what to look for.
+"""
+
 
 import re
+import regex
 from math import prod, sqrt
 from collections import defaultdict
 
@@ -186,11 +195,12 @@ class Chart:
         count = 0
         grid = self.tapestry.grid
         for i in range(self.tapestry.size - 2):
-            match = re.search(self.monster[2], grid[i + 2])
-            if match:
-                span = match.span()
-                if re.match(self.monster[0], grid[i][span[0]:span[1]]) and re.match(self.monster[1], grid[i + 1][span[0]:span[1]]):
-                    count += 1
+            matches = regex.finditer(self.monster[2], grid[i + 2], overlapped=True)
+            for match in matches:
+                if match:
+                    span = match.span()
+                    if re.match(self.monster[0], grid[i][span[0]:span[1]]) and re.match(self.monster[1], grid[i + 1][span[0]:span[1]]):
+                        count += 1
         return count
     
     def monster_size(self):
@@ -230,6 +240,7 @@ def second_star(tiles):
     for i in range(0, 4):
         monsters = chart.scan_for_monsters()
         if monsters > 0:
+            print(f'FOUND {monsters} monsters')
             monstotal = monsters * chart.monster_size()
             print(chart.tapestry.count_hashes() - monstotal)
         chart.tapestry.rotate(True)
