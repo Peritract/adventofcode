@@ -7,6 +7,7 @@ kept on getting the wrong answer. I was not carefully handling multiple monsters
 hint on Reddit let me know what to look for.
 """
 
+
 import re
 import regex
 from math import prod, sqrt
@@ -239,16 +240,15 @@ def second_star(tiles):
     for i in range(0, 4):
         monsters = chart.scan_for_monsters()
         if monsters > 0:
-            print(f'FOUND {monsters} monsters')
             monstotal = monsters * chart.monster_size()
-            print(chart.tapestry.count_hashes() - monstotal)
+            return chart.tapestry.count_hashes() - monstotal
         chart.tapestry.rotate(True)
     chart.tapestry.flip(True)
     for i in range(0, 4):
         monsters = chart.scan_for_monsters()
         if monsters > 0:
             monstotal = monsters * chart.monster_size()
-            print(chart.tapestry.count_hashes() - monstotal)
+            return chart.tapestry.count_hashes() - monstotal
         chart.tapestry.rotate(True)
     
 def solution(source):
