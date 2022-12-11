@@ -40,7 +40,7 @@ def second_star(data):
         y = i // 40
         x = i % 40
         val_x = vals[i] % 40
-        rng = (val_x - 1 if val_x - 1 > -1 else 39, val_x, val_x + 1 if val_x + 1 < 40 else 0)
+        rng = (val_x - 1 if val_x != 0 else 39, val_x, val_x + 1 if val_x != 39 else 0)
         if x in rng:
             grid[y][x] = '#'
         display_screen(grid)
