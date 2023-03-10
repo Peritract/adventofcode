@@ -40,7 +40,17 @@ def first_star(data):
     return mul(*sorted([x['seen'] for x in data])[-2:])
 
 def second_star(data):
-    pass
+    for i in range(10000):
+        for m in range(len(data)):
+            curr = data[m]
+            count = len(curr['items'])
+            for i in range(count):
+                item = curr['items'].pop(0)
+                item = curr['op'](item) // 3
+                target = curr[curr['test'](item)]
+                data[target]['items'].append(item)
+                curr['seen'] += 1
+    return mul(*sorted([x['seen'] for x in data])[-2:])
 
 if __name__ == "__main__":
   data = load_input("input.txt")
