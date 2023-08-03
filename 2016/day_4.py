@@ -1,6 +1,5 @@
 """This code is dedicated to C8, without whom it could not have been written."""
 
-"""
 
 def extract_elements(room):
     chunks = room.split("-")
