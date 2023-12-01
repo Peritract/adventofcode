@@ -3,9 +3,6 @@ NUM_WORDS = {"nine": "9", "eight": "8",  "seven": "7",
              "three": "3", "two": "2", "one" : "1"
              }
 
-OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9",
-            'nine', 'eight', 'seven', 'six', 'five',
-                'four', 'three', 'two', 'one']
 
 def load_input(source):
     with open(source) as f:
@@ -13,56 +10,17 @@ def load_input(source):
     return data
 
 
-def is_possible_num_word(word):
-    poss = False
-    for k in NUM_WORDS.keys():
-        if k.startswith(word):
-            poss = True
-    return poss
-
-
-def replace_num_words(row):
-    res = ""
-    acc = ""
-    for c in row:
-        if c.isdigit():
-            res += c
-            if acc in NUM_WORDS:
-                res += NUM_WORDS[acc]
-            acc = ""
+def extract_calibration_val(row):
+    nums = []
+    for i in range(len(row)):
+        if row[i].isdigit():
+            nums.append(row[i])
         else:
-            acc += c
-            if acc in NUM_WORDS:
-                res += NUM_WORDS[acc]
-                if is_possible_num_word(acc[-1]):
-                    acc = c
-                else:
-                    acc = ""
-            elif not is_possible_num_word(acc):
-                
-                acc = c
-    return res
-
-
-def get_by_replacement(data):
-    # Doesn't work
-    tot = 0
-    for r in data:
-        r1 = replace_num_words(r)
-        tot += int(r1[0] + r1[-1])
-    return tot
-
-
-def get_by_index(row):
-    min_index = None
-    min_val = None
-    for opt in OPTIONS:
-        idx = row.find(opt)
-        if idx != -1 and (min_index is None or idx < min_index):
-            min_val = opt
-            min_index = idx
-    if min_val:
-        return min_val if min_val.isdigit() else NUM_WORDS[min_val]
+            for j in range(i + 2, i + 6):
+                if row[i:j] in NUM_WORDS:
+                    nums.append(NUM_WORDS[row[i:j]])
+                    break
+    return int(nums[0] + nums[-1])
 
 
 def first_star(data):
@@ -73,16 +31,9 @@ def first_star(data):
 
 
 def second_star(data):
-    tot = 0
-    for r in data:
-        r0 = get_by_index(r)
-        r1 = None
-        start_idx = -1
-        while not r1:
-            r1 = get_by_index(r[start_idx:])
-            start_idx -= 1
-        tot += int(r0 + r1)
-    return tot
+    return sum([extract_calibration_val(r)
+                for r in data])
+    
 
 def solution(source):
     data = load_input(source)
