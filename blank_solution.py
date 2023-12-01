@@ -1,8 +1,6 @@
 def load_input(source):
-    data = []
-    with open(source) as file:
-        for line in file:
-            data.append(line.strip())
+    with open(source) as f:
+        data = [x.strip() for x in f.readlines()]
     if len(data) == 1:
         data = data[0]
     return data
