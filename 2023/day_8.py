@@ -32,6 +32,7 @@ def second_star(data):
     steps = 0
     locs = [k for k in network.keys() if k.endswith("A")]
     periods = [0 for i in range(len(locs))]
+    
     while not all(periods):
         cmd = instructions[(steps) % len(instructions)]
         locs = [network[l][0 if cmd == "L" else 1] for l in locs]
@@ -40,7 +41,7 @@ def second_star(data):
             if locs[i].endswith("Z") and not periods[i]:
                 periods[i] = steps
     periods = sorted(periods)
-    # Start from the largest value
+
     val = periods[0]
     increment = periods[0]
     for i in range(len(periods) - 1):
@@ -48,11 +49,6 @@ def second_star(data):
             val += increment
         increment = val
     return val
-    # Go up in smallest until we find something divisible by 2
-
-    # Go up in that until we find something divisible by 3
-
-    # Go up in that
     return periods
 
 def solution(source):
