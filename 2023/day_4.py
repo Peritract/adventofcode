@@ -47,7 +47,7 @@ def second_star(data):
 
 def solution(source):
     data = load_input(source)
-    print("Day N")
+    print("Day 4")
     print("First star:", str(first_star(data)))
     print("Second star:", str(second_star(data)))
     print("-------------------------------------")
