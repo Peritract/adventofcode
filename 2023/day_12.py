@@ -37,6 +37,14 @@ def validate_possibility(row, check):
     p_err = [x for x in re.split("\.{1,}", row) if x]
     return check == p_err
 
+def unfold(row):
+    segments = []
+    checks = []
+    for i in range(5):
+        segments.append(row[0])
+        checks.extend(row[1])
+    string = "?".join(segments)
+    return (string, checks)
 
 def first_star(data):
     data = parse_input(data)
@@ -50,7 +58,11 @@ def first_star(data):
 
 
 def second_star(data):
-    return "Not solved"
+    data = parse_input(data)
+    for r in list(data)[:1]:
+        remaining = len(r[0]) - sum(r[1])
+        print(remaining)
+        print(r[0], ".".join(["#" * i for i in r[1]]))
 
 
 def solution(source):

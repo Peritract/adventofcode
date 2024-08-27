@@ -5,7 +5,6 @@ def load_input(source):
         data = data[0]
     return data
     
-
 def first_star(data):
     print(data)
     return "Not solved"
